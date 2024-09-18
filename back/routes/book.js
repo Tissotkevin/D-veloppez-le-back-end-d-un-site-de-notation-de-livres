@@ -6,10 +6,10 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'images');
     },
-    // filename: (req, file, cb) => {
-    //     const form = JSON.parse(req.body.book);
-    //     cb(null, form.title);
-    // },
+     filename: (req, file, cb) => {
+         const form = JSON.parse(req.body.book);
+         cb(null, form.title);
+     },
 });
 
 const upload = multer({ storage: storage });

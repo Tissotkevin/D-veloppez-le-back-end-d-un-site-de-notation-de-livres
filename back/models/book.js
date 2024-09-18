@@ -15,11 +15,11 @@ const bookSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: false,
+    required: true,
   },
   coverImage: {
     type: String,
-    required: false,
+    required: true,
   },
   createdAt: {
     type: Date,
