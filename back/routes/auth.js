@@ -21,32 +21,50 @@ router.post('/signup', async (req, res) => {
         const user = await newUser.save();
         res.status(200).json(user);
     } catch (err) {
-        res.status(500).json(err);
+        console.error(err);
+        res.status(500).json('Une erreur est survenue, veuillez réessayer.');
     }
 });
 
 //LOGIN
 router.post('/login', async (req, res) => {
     try {
-        const user = await User.findOne({ username: req.body.username });
-        !user && res.status(404).json('essaie encore');
-        if(user == null) {
-            return res.status(404);
+        // Vérifiez que les champs requis sont fournis
+        if (!req.body.email || !req.body.password) {
+            return res.status(400).json('Le nom d’utilisateur et le mot de passe sont requis.');
         }
-        console.log(req.body, user);
-        const validPassword = await bcrypt.compare(req.body.password, user.password);
-        !validPassword && res.status(400).json('essaie encore');
 
+        // Recherchez l'utilisateur par nom d'utilisateur
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(404).json('Nom d’utilisateur ou mot de passe incorrect.');
+        }
+
+        // Comparez le mot de passe fourni avec le mot de passe hashé dans la base de données
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
+        if (!validPassword) {
+            return res.status(400).json('Nom d’utilisateur ou mot de passe incorrect.');
+        }
+
+        // Génération du token JWT
         const token = jwt.sign({ id: user._id }, process.env.JWT_SEC, { expiresIn: '3h' });
-        res.status(200).json({ user: {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-        }, token });
+
+        // Réponse avec les détails de l’utilisateur et le token
+        res.status(200).json({
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+            },
+            token
+        });
     } catch (err) {
-        console.log(err);
-        res.status(500).json(err);
+        // Log de l'erreur pour le débogage
+        console.error(err);
+        // Réponse d'erreur générique
+        res.status(500).json('Une erreur est survenue, veuillez réessayer.');
     }
 });
+
 
 module.exports = router;
