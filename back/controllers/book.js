@@ -1,16 +1,5 @@
 const Book = require('../models/book');
 
-//CREATE BOOK
-exports.createBook = async (req, res) => {
-    try {
-        const newBook = new Book(req.body);
-        const savedBook = await newBook.save();
-        res.status(200).json(savedBook);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-};
-
 //GET ALL BOOKS
 exports.getAllBooks = async (req, res) => {
     try {
@@ -30,6 +19,24 @@ exports.getBookById = async (req, res) => {
         res.status(500).json(err);
     }
 };
+
+//CREATE BOOK
+exports.createBook = async (req, res) => {
+    try {
+        const newBook = new Book(req.body);
+        const savedBook = await newBook.save();
+        userId: req.auth.userId,
+        imageUrl `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        res.status(201).json(savedBook);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+    book.save()
+    .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
+    .catch(error => { res.status(400).json( { error })})
+};
+
+
 
 //UPDATE BOOK
 exports.updateBook = async (req, res) => {
@@ -51,7 +58,7 @@ exports.updateBook = async (req, res) => {
 exports.deleteBook = async (req, res) => {
     try {
         await Book.findByIdAndDelete(req.params.id);
-        res.status(200).json('livre suprimé');
+        res.status(200).json('livre supprimé');
     } catch (err) {
         res.status(500).json(err);
     }

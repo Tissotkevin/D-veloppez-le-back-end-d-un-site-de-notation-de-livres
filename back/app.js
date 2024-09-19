@@ -39,10 +39,7 @@ const storage = multer.diskStorage({
 app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
 app.use('/api/books', bookRoute);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// Remove app.listen() because server.js handles this part
-// app.listen(process.env.PORT || 5000, () => {
-//     console.log('Backend is running');
-// });
 
 module.exports = app;
